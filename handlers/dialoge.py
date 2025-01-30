@@ -1,3 +1,5 @@
+from pkgutil import get_data
+
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.state import State, StatesGroup
@@ -25,6 +27,11 @@ async def send_hw(message: types.Message, state: FSMContext):
 
 @hw_router.message(Homework.number_of_hw)
 async def send_hw(message: types.Message, state: FSMContext):
+    hw_number = message.text
+    hw_number = int(hw_number)
+    if hw_number > 8 or hw_number < 0:
+        await message.answer('введите число от 1 до 8')
+        return
     await state.update_data(number_of_hw=message.text)
     await message.answer('Вставьте ссылку')
     await state.set_state(Homework.link)
@@ -33,7 +40,7 @@ async def send_hw(message: types.Message, state: FSMContext):
 async def send_hw(message: types.Message, state: FSMContext):
     await state.update_data(link=message.text)
     await message.answer('Спасибо, дз была успешно отправлена')
-    data = state.get_data()
+    data = await state.get_data()
     database.save_hw(data)
     await state.clear()
 
