@@ -16,6 +16,7 @@ async def on_startup(bot: Bot):
 async def main():
     dp.include_router(start_router)
     dp.include_router(hw_router)
+    dp.startup.register(on_startup)
     await dp.start_polling()
 
 if __name__ == '__main__':
